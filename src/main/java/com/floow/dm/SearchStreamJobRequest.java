@@ -1,8 +1,8 @@
 package com.floow.dm;
-
 import java.io.FileInputStream;
 
-public class SearchStreamJobRequest {
+
+public class SearchStreamJobRequest extends JobHistory {
 	
 	private String uniqueID;
 	
@@ -23,9 +23,17 @@ public class SearchStreamJobRequest {
 	
 	private DaoAccess daoDetails;
 
+	/*	 
+	 TODO:   IMPLEMENT IN JOB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	 
+	 this.failureReason = failureReason;
+	 SearchJobStatus status
+	 */
+	
+	
 	public SearchStreamJobRequest(String uniqueID, long startByte, long endByte, String filter, Integer numLetters,
-			String failureReason, FileInputStream fileInputStream, DaoAccess daoDetails) {
-		super();
+					FileInputStream fileInputStream, DaoAccess daoDetails) {
+		super(uniqueID);
 		this.uniqueID = uniqueID;
 		this.startByte = startByte;
 		this.endByte = endByte;

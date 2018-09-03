@@ -8,6 +8,10 @@ public class ClientManager {
 	
 	public void initWordStatSearchService(WordStatSearchService service) {
 		this.service = service;
+		
+		
+		
+		
 		presentMainMenu();
 	}
 	

@@ -3,7 +3,7 @@ import com.floow.dm.*;
 
 public abstract class AbstractService {
 
-	private DaoAccess dao;
+	protected DaoAccess dao;
 	
 	public AbstractService() {
 		
@@ -11,6 +11,10 @@ public abstract class AbstractService {
 	
 	public AbstractService(DaoAccess dao) {
 		this.dao = dao;
+	}
+
+	public DaoAccess getDao() {
+		return dao;
 	}
 	
 }

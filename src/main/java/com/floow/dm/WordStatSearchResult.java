@@ -26,7 +26,7 @@ public class WordStatSearchResult extends AbstractSearchResult {
 
 	public WordStatSearchResult(long searchTime, Map<String, Integer> leastCommonWords,
 			Map<String, Integer> mostCommonWords, Map<String, Integer> longestWords, Map<String, Integer> shortestWords,
-			long totalWords, String filter, int numLetters) {
+			Long totalWords, String filter, Integer numLetters) {
 		super(searchTime);
 		this.leastCommonWords = leastCommonWords;
 		this.mostCommonWords = mostCommonWords;
