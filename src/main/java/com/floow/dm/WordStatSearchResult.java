@@ -14,9 +14,9 @@ public class WordStatSearchResult extends AbstractSearchResult {
 	
 	private long totalWords;
 	
-	private String filter;
+	private String totalWordsFilter;
 	
-	private int numLetters;
+	private Integer totalWordsNumLetters;
 	
 	
 	public WordStatSearchResult(long searchTime) {
@@ -33,8 +33,79 @@ public class WordStatSearchResult extends AbstractSearchResult {
 		this.longestWords = longestWords;
 		this.shortestWords = shortestWords;
 		this.totalWords = totalWords;
-		this.filter = filter;
-		this.numLetters = numLetters;
+		this.totalWordsFilter = filter;
+		this.totalWordsNumLetters = numLetters;
 	}
+
+
+	public Map<String, Integer> getLeastCommonWords() {
+		return leastCommonWords;
+	}
+
+
+	public void setLeastCommonWords(Map<String, Integer> leastCommonWords) {
+		this.leastCommonWords = leastCommonWords;
+	}
+
+
+	public Map<String, Integer> getMostCommonWords() {
+		return mostCommonWords;
+	}
+
+
+	public void setMostCommonWords(Map<String, Integer> mostCommonWords) {
+		this.mostCommonWords = mostCommonWords;
+	}
+
+
+	public Map<String, Integer> getLongestWords() {
+		return longestWords;
+	}
+
+
+	public void setLongestWords(Map<String, Integer> longestWords) {
+		this.longestWords = longestWords;
+	}
+
+
+	public Map<String, Integer> getShortestWords() {
+		return shortestWords;
+	}
+
+
+	public void setShortestWords(Map<String, Integer> shortestWords) {
+		this.shortestWords = shortestWords;
+	}
+
+
+	public long getTotalWords() {
+		return totalWords;
+	}
+
+
+	public void setTotalWords(long totalWords) {
+		this.totalWords = totalWords;
+	}
+
+
+	public String getTotalWordsFilter() {
+		return totalWordsFilter;
+	}
+
+
+	public void setTotalWordsFilter(String totalWordsFilter) {
+		this.totalWordsFilter = totalWordsFilter;
+	}
+
+
+	public Integer getTotalWordsNumLetters() {
+		return totalWordsNumLetters;
+	}
+
+
+	public void setTotalWordsNumLetters(Integer totalWordsNumLetters) {
+		this.totalWordsNumLetters = totalWordsNumLetters;
+	}
+
 	
 }

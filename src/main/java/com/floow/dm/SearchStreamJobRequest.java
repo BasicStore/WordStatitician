@@ -14,7 +14,7 @@ public class SearchStreamJobRequest {
 	private String filter;
 	
 	// search for words of this number of letters only. Leave as null to ignore this restriction
-	private int numLetters;
+	private Integer numLetters;
 	
 	// if the job fails to complete, give some explanation
 	private String failureReason;
@@ -23,7 +23,7 @@ public class SearchStreamJobRequest {
 	
 	private DaoAccess daoDetails;
 
-	public SearchStreamJobRequest(String uniqueID, long startByte, long endByte, String filter, int numLetters,
+	public SearchStreamJobRequest(String uniqueID, long startByte, long endByte, String filter, Integer numLetters,
 			String failureReason, FileInputStream fileInputStream, DaoAccess daoDetails) {
 		super();
 		this.uniqueID = uniqueID;
@@ -68,11 +68,11 @@ public class SearchStreamJobRequest {
 		this.filter = filter;
 	}
 
-	public int getNumLetters() {
+	public Integer getNumLetters() {
 		return numLetters;
 	}
 
-	public void setNumLetters(int numLetters) {
+	public void setNumLetters(Integer numLetters) {
 		this.numLetters = numLetters;
 	}
 
