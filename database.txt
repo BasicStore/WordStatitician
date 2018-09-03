@@ -1,0 +1,47 @@
+===================================================================================
+DAOs:
+
+   AbstractConnection
+   - protected void makeConnection() 
+
+   WordsStatDao extends AbstractConnection	 
+   - protected void saveWordToNumber(String tableName, int number, String content, String searchId, String jobid)
+   - public void saveTotal(String searchId, String jobid, long number, boolean filter, boolean numbered)
+   - protected Map<String, Integer> findWordToNumber(String tableName, String searchId, String jobid)
+   - protected Map<Integer, String> findNumberToWords(String tableName, String searchId, String jobid)
+   - public long findTotalWords(String searchId, String jobid, boolean filter, boolean numbered)   
+	
+   JobHistoryDao extends AbstractConnection	
+   - public void save(String searchId, String jobid, String failReason, int status)
+   - public List<JobHistoryDao> find(String searchId, String jobid)
+
+   MostLeastCommonWordsStatDao extends AbstractConnection	
+   - public void saveMostAndLeastCommonWords(String word, int occurrances, String searchId, String jobid)
+   - public void saveFilteredMostAndLeastCommonWords(String word, int occurrances, String searchId, String jobid)
+   - public void saveFilteredAndNumberedMostAndLeastCommonWords(String word, int occurrances, String searchId, String jobid)
+   - public Map<String, Integer> findMostAndLeastCommonWords(String searchId, String jobid)
+   - public Map<String, Integer> findFilteredMostAndLeastCommonWords(String searchId, String jobid)
+   - public Map<String, Integer> findFilteredAndNumberedMostAndLeastCommonWords(String searchId, String jobid)
+
+   LongestShortestWordsStatDao extends AbstractConnection	
+   - public void saveLongestAndShortestWords(String wordContent, int numLetters, String searchId, String jobid)
+   - public void saveFilteredLongestAndShortestWords(String wordContent, int numLetters, String searchId, String jobid)
+   - public Map<Integer, List<String>> findLongestAndShortestWords(String searchId, String jobid)
+   - public Map<Integer, List<String>> findFilteredLongestAndShortestWords(String searchId, String jobid)
+
+===================================================================================
+
+DATABASE
+
+  - job_history:  searchId + jobid + failureReason + status;
+
+  - most_and_least_common_words:           word v occurances v searchId + jobid
+  - filered_most_and_least_common_words:   word v occurances v searchId + jobid
+  - numbered_most_and_least_common_words:  word v occurances v searchId + jobid
+
+  - longest_and_shortest_words:            occurances v wordContent v searchId + jobid
+  - filtered_longest_and_shortest_words:   occurances v wordContent v searchId + jobid
+
+  - total_search_words:                    searchId v jobid v total v filter v numbered
+
+------------------------------------------------------------

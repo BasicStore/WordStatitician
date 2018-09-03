@@ -14,9 +14,9 @@ public class WordStatSearchResult extends AbstractSearchResult {
 	
 	private long totalWords;
 	
-	private String totalWordsFilter;
+	private String filter;
 	
-	private Integer totalWordsNumLetters;
+	private Integer numLetters;
 	
 	
 	public WordStatSearchResult(long searchTime) {
@@ -33,8 +33,8 @@ public class WordStatSearchResult extends AbstractSearchResult {
 		this.longestWords = longestWords;
 		this.shortestWords = shortestWords;
 		this.totalWords = totalWords;
-		this.totalWordsFilter = filter;
-		this.totalWordsNumLetters = numLetters;
+		this.filter = filter;
+		this.numLetters = numLetters;
 	}
 
 
@@ -88,24 +88,24 @@ public class WordStatSearchResult extends AbstractSearchResult {
 	}
 
 
-	public String getTotalWordsFilter() {
-		return totalWordsFilter;
+	public String getFilter() {
+		return filter;
 	}
 
 
-	public void setTotalWordsFilter(String totalWordsFilter) {
-		this.totalWordsFilter = totalWordsFilter;
+	public void setFilter(String filter) {
+		this.filter = filter;
 	}
 
 
-	public Integer getTotalWordsNumLetters() {
-		return totalWordsNumLetters;
+	public Integer getNumLetters() {
+		return numLetters;
 	}
 
 
-	public void setTotalWordsNumLetters(Integer totalWordsNumLetters) {
-		this.totalWordsNumLetters = totalWordsNumLetters;
+	public void setNumLetters(Integer numLetters) {
+		this.numLetters = numLetters;
 	}
-
+	
 	
 }

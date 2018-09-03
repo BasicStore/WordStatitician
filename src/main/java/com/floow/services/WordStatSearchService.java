@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.apache.commons.lang3.StringUtils;
 import java.util.List;
-import java.util.ArrayList;
 import com.floow.dm.*;
 import com.floow.exceptions.*;
 
@@ -22,128 +20,128 @@ public class WordStatSearchService extends AbstractService {
 	
 
 	public AbstractSearchResult getMostAndLeastCommonWords() throws FailedSearchException {
-		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
-		srchTypes.add(WordSearchType.MOST_COMMON_WORD);
-		srchTypes.add(WordSearchType.LEAST_COMMON_WORD);
-		return performSearch(null, null, srchTypes);
+//		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
+//		srchTypes.add(WordSearchType.MOST_COMMON_WORD);
+//		srchTypes.add(WordSearchType.LEAST_COMMON_WORD);
+//		return performSearch(null, null, srchTypes);
 		
-//		Map<String, Integer> leastCommonWords = new HashMap<String, Integer>();
-//		leastCommonWords.put("curiosity", 1);
-//		leastCommonWords.put("triviality", 3);
-//		leastCommonWords.put("pomposity", 3);
-//		leastCommonWords.put("oddly", 4);
-//		leastCommonWords.put("googly", 4);		
-//		Map<String, Integer> mostCommonWords = new HashMap<String, Integer>();
-//		mostCommonWords.put("curiosity", 1);
-//		mostCommonWords.put("triviality", 3);
-//		mostCommonWords.put("pomposity", 3);
-//		mostCommonWords.put("oddly", 4);
-//		mostCommonWords.put("googly", 4);
-//		WordStatSearchResult result = new WordStatSearchResult(4000l); 
-//		result.setLeastCommonWords(leastCommonWords);
-//		result.setMostCommonWords(mostCommonWords);
-//		return result;		
+		Map<String, Integer> leastCommonWords = new HashMap<String, Integer>();
+		leastCommonWords.put("curiosity", 1);
+		leastCommonWords.put("triviality", 3);
+		leastCommonWords.put("pomposity", 3);
+		leastCommonWords.put("oddly", 4);
+		leastCommonWords.put("googly", 4);		
+		Map<String, Integer> mostCommonWords = new HashMap<String, Integer>();
+		mostCommonWords.put("curiosity", 1);
+		mostCommonWords.put("triviality", 3);
+		mostCommonWords.put("pomposity", 3);
+		mostCommonWords.put("oddly", 4);
+		mostCommonWords.put("googly", 4);
+		WordStatSearchResult result = new WordStatSearchResult(4000l); 
+		result.setLeastCommonWords(leastCommonWords);
+		result.setMostCommonWords(mostCommonWords);
+		return result;		
 	}
 	
 
 	
 	
 	public AbstractSearchResult getMostAndLeastCommonWords(String filter, Integer numLetters) throws FailedSearchException {
-		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
-		
-		if (StringUtils.isBlank(filter)) {
-			srchTypes.add(WordSearchType.MOST_COMMON_WORD);
-			srchTypes.add(WordSearchType.LEAST_COMMON_WORD);
-		} else {
-			srchTypes.add(WordSearchType.MOST_COMMON_WORD_WITH_FILTER);
-			srchTypes.add(WordSearchType.LEAST_COMMON_WORD_WITH_FILTER);
-		}
-		
-		if (numLetters != null && numLetters.intValue() <= 0 ) {
-			throw new FailedSearchException("Number of letters must be a positive number, but was: " + numLetters);
-		}
-		
-		if (numLetters != null) { 
-			srchTypes.add(WordSearchType.MOST_COMMON_WORD_OF_N_LETTERS);
-			srchTypes.add(WordSearchType.LEAST_COMMON_WORD_OF_N_LETTERS);
-		}
-
-		return performSearch(filter, numLetters, srchTypes);
+//		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
+//		
+//		if (StringUtils.isBlank(filter)) {
+//			srchTypes.add(WordSearchType.MOST_COMMON_WORD);
+//			srchTypes.add(WordSearchType.LEAST_COMMON_WORD);
+//		} else {
+//			srchTypes.add(WordSearchType.MOST_COMMON_WORD_WITH_FILTER);
+//			srchTypes.add(WordSearchType.LEAST_COMMON_WORD_WITH_FILTER);
+//		}
+//		
+//		if (numLetters != null && numLetters.intValue() <= 0 ) {
+//			throw new FailedSearchException("Number of letters must be a positive number, but was: " + numLetters);
+//		}
+//		
+//		if (numLetters != null) { 
+//			srchTypes.add(WordSearchType.MOST_COMMON_WORD_OF_N_LETTERS);
+//			srchTypes.add(WordSearchType.LEAST_COMMON_WORD_OF_N_LETTERS);
+//		}
+//
+//		return performSearch(filter, numLetters, srchTypes);
 
 		//		// DUMMY HERE
-//		Map<String, Integer> leastCommonWords = new HashMap<String, Integer>();
-//		leastCommonWords.put("curiosity", 1);
-//		leastCommonWords.put("triviality", 3);
-//		leastCommonWords.put("pomposity", 3);
-//		leastCommonWords.put("oddly", 4);
-//		leastCommonWords.put("googly", 4);		
-//		Map<String, Integer> mostCommonWords = new HashMap<String, Integer>();
-//		mostCommonWords.put("curiosity", 1);
-//		mostCommonWords.put("triviality", 3);
-//		mostCommonWords.put("pomposity", 3);
-//		mostCommonWords.put("oddly", 4);
-//		mostCommonWords.put("googly", 4);
-//		WordStatSearchResult result = new WordStatSearchResult(4000l); 
-//		result.setLeastCommonWords(leastCommonWords);
-//		result.setMostCommonWords(mostCommonWords);
-//		return result;
+		Map<String, Integer> leastCommonWords = new HashMap<String, Integer>();
+		leastCommonWords.put("curiosity", 1);
+		leastCommonWords.put("triviality", 3);
+		leastCommonWords.put("pomposity", 3);
+		leastCommonWords.put("oddly", 4);
+		leastCommonWords.put("googly", 4);		
+		Map<String, Integer> mostCommonWords = new HashMap<String, Integer>();
+		mostCommonWords.put("curiosity", 1);
+		mostCommonWords.put("triviality", 3);
+		mostCommonWords.put("pomposity", 3);
+		mostCommonWords.put("oddly", 4);
+		mostCommonWords.put("googly", 4);
+		WordStatSearchResult result = new WordStatSearchResult(4000l); 
+		result.setLeastCommonWords(leastCommonWords);
+		result.setMostCommonWords(mostCommonWords);
+		return result;
 	}
 	
 	
 	
 	public AbstractSearchResult getLongestAndShortestWords(String filter) throws FailedSearchException {
-		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
-		if (StringUtils.isBlank(filter)) {
-			srchTypes.add(WordSearchType.LONGEST_WORD);
-			srchTypes.add(WordSearchType.SHORTEST_WORD);
-
-		} else {
-			srchTypes.add(WordSearchType.LONGEST_WORD_WITH_FILTER);
-			srchTypes.add(WordSearchType.SHORTEST_WORD_WITH_FILTER);
-		}
-		
-		return performSearch(filter, null, srchTypes);
+//		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
+//		if (StringUtils.isBlank(filter)) {
+//			srchTypes.add(WordSearchType.LONGEST_WORD);
+//			srchTypes.add(WordSearchType.SHORTEST_WORD);
+//
+//		} else {
+//			srchTypes.add(WordSearchType.LONGEST_WORD_WITH_FILTER);
+//			srchTypes.add(WordSearchType.SHORTEST_WORD_WITH_FILTER);
+//		}
+//		
+//		return performSearch(filter, null, srchTypes);
 		
 		// DUMMY HERE
-//		WordStatSearchResult result = new WordStatSearchResult(4003l);
-//		Map<String, Integer> longestWords = new HashMap<String, Integer>();
-//		longestWords.put("sdfsdfsdfsdfwsfsddfwerwerwefsdfsdfsfsdfsdfsdfsfsfsfsdfsdf", 30);
-//		longestWords.put("fsdfsdfsdfsdfsdfsdfsdfsddfsfsdfsdfsfdsdfsdfsdfs", 23);
-//		longestWords.put("zcxzxczxczxczxczxczxxczczczxczxczxczxczxczx", 19);
-//		result.setLongestWords(longestWords);
-//		Map<String, Integer> shortestWords = new HashMap<String, Integer>();
-//		shortestWords.put("a", 1);
-//		shortestWords.put("i", 1);
-//		result.setShortestWords(shortestWords);
-//		return result;
+		WordStatSearchResult result = new WordStatSearchResult(4003l);
+		Map<String, Integer> longestWords = new HashMap<String, Integer>();
+		longestWords.put("sdfsdfsdfsdfwsfsddfwerwerwefsdfsdfsfsdfsdfsdfsfsfsfsdfsdf", 30);
+		longestWords.put("fsdfsdfsdfsdfsdfsdfsdfsddfsfsdfsdfsfdsdfsdfsdfs", 23);
+		longestWords.put("zcxzxczxczxczxczxczxxczczczxczxczxczxczxczx", 19);
+		result.setLongestWords(longestWords);
+		Map<String, Integer> shortestWords = new HashMap<String, Integer>();
+		shortestWords.put("a", 1);
+		shortestWords.put("i", 1);
+		result.setShortestWords(shortestWords);
+		return result;
 	}
 	
 	
 	
 	
 	public AbstractSearchResult getTotalWords(String filter, Integer numLetters) throws FailedSearchException {
-		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
-		if (StringUtils.isBlank(filter)) {
-			srchTypes.add(WordSearchType.TOTAL_WORDS);
-		} else {
-			srchTypes.add(WordSearchType.TOTAL_WORDS_WITH_FILTER);
-		}
+//		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
+//		if (StringUtils.isBlank(filter)) {
+//			srchTypes.add(WordSearchType.TOTAL_WORDS);
+//		} else {
+//			srchTypes.add(WordSearchType.TOTAL_WORDS_WITH_FILTER);
+//		}
+//		
+//		if (numLetters != null && numLetters.intValue() <= 0 ) {
+//			throw new FailedSearchException("Number of letters must be a positive number, but was: " + numLetters);
+//		}
+//		
+//		if (numLetters != null) { 
+//			srchTypes.add(WordSearchType.TOTAL_WORDS_OF_N_LETTERS);
+//		}
+//
+//		return performSearch(filter, numLetters, srchTypes);
 		
-		if (numLetters != null && numLetters.intValue() <= 0 ) {
-			throw new FailedSearchException("Number of letters must be a positive number, but was: " + numLetters);
-		}
-		
-		if (numLetters != null) { 
-			srchTypes.add(WordSearchType.TOTAL_WORDS_OF_N_LETTERS);
-		}
-
-		return performSearch(filter, numLetters, srchTypes);
-		
-//		WordStatSearchResult result = new WordStatSearchResult(4008l);
-//		result.setTotalWords(90000345l);
-//		result.setTotalWordsFilter(9003);
-//		result.setTotalWordsNumLetters(307);
-//		return result;
+		WordStatSearchResult result = new WordStatSearchResult(4008l);
+		result.setTotalWords(90000345l);
+		result.setFilter(filter);
+		result.setNumLetters(numLetters);
+		return result;
 	}
 	
 	
@@ -165,7 +163,7 @@ public class WordStatSearchService extends AbstractService {
 			long timeElapsed = 0l;
 			while (timeElapsed < MAX_PROCESSING_TIME) {
 				Thread.sleep(4000l);
-				boolean searchComplete = searchCompleted(searchParts.length);
+				boolean searchComplete = searchCompleted(searchParts.length, searchId);
 				timeElapsed = startTime - System.currentTimeMillis();
 				if (searchComplete) {
 					return calculateResults(searchId, srchTypes, timeElapsed);
@@ -210,17 +208,16 @@ public class WordStatSearchService extends AbstractService {
 			
 			long startByte = key;
 			long endByte = segmentMap.get(key);
-			SearchJobStatus status = SearchJobStatus.REQUESTED;
 			
 			// TODO ouiyiuiuyi
 			FileInputStream filePart = null; 
 			
-			SearchStreamJobRequest jobReq = new SearchStreamJobRequest(jobIds[count], startByte, endByte, filter, 
-					numLetters, filePart, dao);
-
-			// TODO send overview to database [searchId + jobReq.jobId + status.id]
+			JobHistory jobRecord = new JobHistory(searchId, jobIds[count], null, SearchJobStatus.PROCESSING);
+			// TODO send overview to database
 			
-			// TODO send to JMS queue or database  [NEED TO GUARANTEE ORDER OF THESE 2 STATEMENTS]
+			SearchStreamJobRequest jobReq = new SearchStreamJobRequest(searchId, jobIds[count], startByte, endByte, filter, 
+					numLetters, filePart, dao);
+			// TODO send to JMS queue or database
 			
 			count++;
 		}
@@ -270,7 +267,7 @@ public class WordStatSearchService extends AbstractService {
 	
 	
 	
-	private boolean searchCompleted(int numSrchParts) throws FailedSearchException {
+	private boolean searchCompleted(int numSrchParts, String searchId) throws FailedSearchException {
 		
 		// TODO GET THIS FROM DAO !!!!!
 		List<JobHistory> jobList = null;  
@@ -307,28 +304,6 @@ public class WordStatSearchService extends AbstractService {
 
 		return file;
 	}
-	
-	
-	
-	/*
-	 JobHistory {
-
-	private String uniqueID;
-	private String failureReason;
-	private SearchJobStatus status;
-	 */
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	
 }

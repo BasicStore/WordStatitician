@@ -1,6 +1,6 @@
 package com.floow.dm;
 import java.io.FileInputStream;
-
+import org.apache.commons.lang3.StringUtils;
 
 public class SearchStreamJobRequest extends JobHistory {
 	
@@ -31,15 +31,13 @@ public class SearchStreamJobRequest extends JobHistory {
 	 */
 	
 	
-	public SearchStreamJobRequest(String uniqueID, long startByte, long endByte, String filter, Integer numLetters,
+	public SearchStreamJobRequest(String searchId, String uniqueID, long startByte, long endByte, String filter, Integer numLetters,
 					FileInputStream fileInputStream, DaoAccess daoDetails) {
-		super(uniqueID);
-		this.uniqueID = uniqueID;
+		super(searchId, uniqueID, StringUtils.EMPTY, SearchJobStatus.PROCESSING);
 		this.startByte = startByte;
 		this.endByte = endByte;
 		this.filter = filter;
 		this.numLetters = numLetters;
-		this.failureReason = failureReason;
 		this.fileInputStream = fileInputStream;
 		this.daoDetails = daoDetails;
 	}

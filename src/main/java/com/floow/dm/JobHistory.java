@@ -1,31 +1,33 @@
 package com.floow.dm;
 
 public class JobHistory {
-
-	private String uniqueID;
+	
+	private String searchId;
+	private String jobId;
 	private String failureReason;
 	private SearchJobStatus status;
 	
 	
-	public JobHistory(String uniqueID) {
-		 this.uniqueID = uniqueID;
+	public JobHistory(String jobId) {
+		 this.jobId = jobId;
 	}
 	
 	
-	public JobHistory(String uniqueID, String failureReason, SearchJobStatus status) {
-		 this.uniqueID = uniqueID;
-		 this.failureReason = failureReason;
-		 this.status = status;
+	public JobHistory(String searchId, String jobId, String failureReason, SearchJobStatus status) {
+		this.searchId = searchId;
+	    this.jobId = jobId;
+		this.failureReason = failureReason;
+	    this.status = status;
 	}
 
 
-	public String getUniqueID() {
-		return uniqueID;
+	public String getJobId() {
+		return jobId;
 	}
 
 
-	public void setUniqueID(String uniqueID) {
-		this.uniqueID = uniqueID;
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
 	}
 
 

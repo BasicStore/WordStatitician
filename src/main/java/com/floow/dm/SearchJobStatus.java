@@ -2,10 +2,9 @@ package com.floow.dm;
 
 public enum SearchJobStatus {
 
-	REQUESTED(1, "requested"),
-	PROCESSING(2, "processing"),
-	COMPLETED(3, "completed"),
-	FAILED(4, "failed");
+	PROCESSING(1, "processing"),
+	COMPLETED(2, "completed"),
+	FAILED(3, "failed");
 	
 	private final int id;
 	private final String literal; 
