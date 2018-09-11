@@ -2,8 +2,7 @@ package com.floow.dm;
 import java.util.*;
 
 public class WordStatSearchResult extends AbstractSearchResult {
-	
-	
+		
 	private Map<String, Integer> leastCommonWords = new HashMap<String, Integer>();
 	
 	private Map<String, Integer> mostCommonWords = new HashMap<String, Integer>();

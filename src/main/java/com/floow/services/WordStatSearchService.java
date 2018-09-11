@@ -1,18 +1,28 @@
 package com.floow.services;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.List;
+import com.floow.client.ClientManager;
 import com.floow.dm.*;
 import com.floow.exceptions.*;
+import org.apache.log4j.Logger;
 
 
 public class WordStatSearchService extends AbstractService {
 
-	private File file;
+	private Logger log = Logger.getLogger(WordStatSearchService.class.getName());
 	
 	public WordStatSearchService(int port, String hostname, String fileName) {
 		super(new DaoAccess(port, hostname, fileName));
@@ -20,27 +30,27 @@ public class WordStatSearchService extends AbstractService {
 	
 
 	public AbstractSearchResult getMostAndLeastCommonWords() throws FailedSearchException {
-//		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
-//		srchTypes.add(WordSearchType.MOST_COMMON_WORD);
-//		srchTypes.add(WordSearchType.LEAST_COMMON_WORD);
-//		return performSearch(null, null, srchTypes);
+		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
+		srchTypes.add(WordSearchType.MOST_COMMON_WORD);
+		srchTypes.add(WordSearchType.LEAST_COMMON_WORD);
+		return performSearch(null, null, srchTypes);
 		
-		Map<String, Integer> leastCommonWords = new HashMap<String, Integer>();
-		leastCommonWords.put("curiosity", 1);
-		leastCommonWords.put("triviality", 3);
-		leastCommonWords.put("pomposity", 3);
-		leastCommonWords.put("oddly", 4);
-		leastCommonWords.put("googly", 4);		
-		Map<String, Integer> mostCommonWords = new HashMap<String, Integer>();
-		mostCommonWords.put("curiosity", 1);
-		mostCommonWords.put("triviality", 3);
-		mostCommonWords.put("pomposity", 3);
-		mostCommonWords.put("oddly", 4);
-		mostCommonWords.put("googly", 4);
-		WordStatSearchResult result = new WordStatSearchResult(4000l); 
-		result.setLeastCommonWords(leastCommonWords);
-		result.setMostCommonWords(mostCommonWords);
-		return result;		
+//		Map<String, Integer> leastCommonWords = new HashMap<String, Integer>();
+//		leastCommonWords.put("curiosity", 1);
+//		leastCommonWords.put("triviality", 3);
+//		leastCommonWords.put("pomposity", 3);
+//		leastCommonWords.put("oddly", 4);
+//		leastCommonWords.put("googly", 4);		
+//		Map<String, Integer> mostCommonWords = new HashMap<String, Integer>();
+//		mostCommonWords.put("curiosity", 1);
+//		mostCommonWords.put("triviality", 3);
+//		mostCommonWords.put("pomposity", 3);
+//		mostCommonWords.put("oddly", 4);
+//		mostCommonWords.put("googly", 4);
+//		WordStatSearchResult result = new WordStatSearchResult(4000l); 
+//		result.setLeastCommonWords(leastCommonWords);
+//		result.setMostCommonWords(mostCommonWords);
+//		return result;		
 	}
 	
 
@@ -148,7 +158,6 @@ public class WordStatSearchService extends AbstractService {
 		
 	////////////////////////////////////////////////////
 	
-		
 	
 	private AbstractSearchResult performSearch(String filter, Integer numLetters, List<WordSearchType> srchTypes) 
 																				throws FailedSearchException {
@@ -158,19 +167,23 @@ public class WordStatSearchService extends AbstractService {
 		String searchId = UUID.randomUUID().toString();
 		long startTime = System.currentTimeMillis();
 
-		try {
-			String[] searchParts = initSearch(searchId, filter, numLetters, srchTypes);
-			long timeElapsed = 0l;
-			while (timeElapsed < MAX_PROCESSING_TIME) {
-				Thread.sleep(4000l);
-				boolean searchComplete = searchCompleted(searchParts.length, searchId);
-				timeElapsed = startTime - System.currentTimeMillis();
-				if (searchComplete) {
-					return calculateResults(searchId, srchTypes, timeElapsed);
-				}
-			}
+		try {			
+			int numOfJobs = doDistributedSearch(searchId, filter, numLetters, srchTypes);
+			
+//			long timeElapsed = 0l;
+//			while (timeElapsed < MAX_PROCESSING_TIME) {
+//				Thread.sleep(3000);
+//				boolean searchComplete = searchCompleted(numOfJobs, searchId);
+//				timeElapsed = startTime - System.currentTimeMillis();
+//				if (searchComplete) {
+//					return collateResults(searchId, srchTypes, timeElapsed);
+//				}
+//			}
+			
+			System.out.println("Number of jobs created: " + numOfJobs);
 			
 		} catch(Exception e) {
+			log.info("Exception thrown attempting to perform file search", e);
 			throw new FailedSearchException("A " + e.getClass().getName() + " has occurred processing the file: " + dao.getFileName() + 
 					". Original message: " + e.getMessage()); 
 		} 
@@ -180,58 +193,91 @@ public class WordStatSearchService extends AbstractService {
 						+ MAX_PROCESSING_TIME / 1000 + " seconds");
 	}
 	
-	
+		
 	
 	// initiates a search
-	private String[] initSearch(String searchId, String filter, Integer numLetters, List<WordSearchType> srchTypes) throws FailedSearchException, IOException {
-	
-		File file = getFile(); 
-		long fileSize = file.length();	
+	private int doDistributedSearch(String searchId, String filter, Integer numLetters, List<WordSearchType> srchTypes) throws FailedSearchException, IOException {
+		// setup thread pool
+		int cores = Runtime.getRuntime().availableProcessors(); // 4
+		int threadPoolSize = cores > 2 ? cores - 2 : 1 ; // note that the JMS queue will be on 1 core, and this class on another..... 
+		                                                 // no point on doing CPU work on more threads than there are CPUs 
+		ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
 		
-		// TODO REMOVE this is only an example
+		// setup channel
 		FileInputStream fileInputStream = new FileInputStream(dao.getFileName());
+	    FileChannel channel = fileInputStream.getChannel();
+	    long fileSize = channel.size(); 
+	    
+	    // set pre-jobs distribution properties
+	    long startTime = System.currentTimeMillis();
+	    int seq = 0; 
+	    long offsetPosition = 0;
+		int chunkSize = 1000000;  // TODO  PUT THIS IN A PROPERTIES FILE
+		
+	    // request distributed jobs to read the file content in bite-sized chunks
+	    while (offsetPosition <= fileSize)
+	    {
+	    	// update the sequence / job id
+	    	seq++;
+	    	
+	    	// allocate memory for this readable chunk
+	        ByteBuffer buff = ByteBuffer.allocate(chunkSize);
+	        
+	        // read file chunk to buff in RAM
+	        channel.read(buff, offsetPosition);
+
+	        // process the readable chunk in a separate thread 
+	        executor.execute(new SearchJobRequest(searchId, String.valueOf(seq), filter, numLetters, buff, srchTypes, dao));
+	        
+	        // get the next read position in the file
+	        offsetPosition = offsetPosition + chunkSize;
+	    }
+	    
+	    // closing tasks
 		fileInputStream.close();
+	    long timeTaken = System.currentTimeMillis() - startTime;
+	    log.info("Time taken to set up all producer threads with their buffer = " + timeTaken / 1000);
+	    awaitTerminationAfterShutdown(executor);
 		
-		// TODO generate this
-		Map<Long, Long> segmentMap = new HashMap<Long, Long>();
-		segmentMap.put(1l, 99999l);
-		segmentMap.put(100000l, 199999l);
-		segmentMap.put(200000l, 299999l);
-		segmentMap.put(300000l, 399999l);
-		segmentMap.put(400000l, 499999l);
-		
-		String[] jobIds = new String[segmentMap.size()];
-		int count = 0;
-		
-		for (long key : segmentMap.keySet()) {
-			jobIds[count] = UUID.randomUUID().toString(); 
-			
-			long startByte = key;
-			long endByte = segmentMap.get(key);
-			
-			// TODO ouiyiuiuyi
-			FileInputStream filePart = null; 
-			
-			JobHistory jobRecord = new JobHistory(searchId, jobIds[count], null, SearchJobStatus.PROCESSING);
-			// TODO send overview to database
-			
-			SearchStreamJobRequest jobReq = new SearchStreamJobRequest(searchId, jobIds[count], startByte, endByte, filter, 
-					numLetters, filePart, dao);
-			// TODO send to JMS queue or database
-			
-			count++;
-		}
-		
-		return jobIds;
+		return seq;
 	}
-            
+     
+	
+/*  RESULTS: 
+    
+    PRODUCING STRING WITHOUT INVOKING THREAD
+    String of 1,000,000 = total seconds = 71 
+    String of 1,000,000 = total seconds = 39
+    String of 100,000 = total seconds = 39
+    
+    
+    PASSING BUFFER TO NEW THREAD ONLY
+    String of 100,000 = total seconds = 40
+    String of 1,000,000 = total seconds = 30!! 
+    
+    */
+	
+	
+	private void awaitTerminationAfterShutdown(ExecutorService threadPool) {
+	    threadPool.shutdown();
+	    try {
+	        if (!threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
+	            threadPool.shutdownNow();
+	        }
+	    } catch (InterruptedException ex) {
+	        threadPool.shutdownNow();
+	        // Thread.currentThread().interrupt();
+	    }
+	}
 	
 	
 	
 	// TODO get the results
-	private AbstractSearchResult calculateResults(String searchId, List<WordSearchType> srchTypes, long timeElapsed)  {
+	private AbstractSearchResult collateResults(String searchId, List<WordSearchType> srchTypes, long timeElapsed)  {
 		
-		/*
+		WordStatSearchResult srchResult = new WordStatSearchResult(timeElapsed);
+		
+		/* SWITCH to build up data
 		   MOST_LEAST_COMMON
 	           MOST_LEAST_COMMON_WITH_FILTER
 	           MOST_LEAST_COMMON_OF_N_LETTERS
@@ -241,10 +287,7 @@ public class WordStatSearchService extends AbstractService {
 	           TOTAL_WORDS_WITH_FILTER  
 	           TOTAL_WORDS_OF_N_LETTERS
 		 */
-
 		
-		// TODO generate this from database
-		WordStatSearchResult srchResult = new WordStatSearchResult(timeElapsed, null, null, null, null, null, null, null);
 		
 		
 		/*
@@ -253,20 +296,15 @@ public class WordStatSearchService extends AbstractService {
 			long totalWords, String filter, int numLetters) 
 		 */
 		
-		
-		/*
-		 ==> IF there are FAILED, return FailedSearchException 
-		           with reason in ProcessFileSegmentRequest.failureReason 
-		 */
-		
-		
-		
 		return srchResult;
 	}
 	
 	
 	
 	
+	
+	// TODO NOTE THAT THE FIRST JOB ON GETTING THE RESULT LIST IS TO CALCULTATE the last words, other than seq 1, and first words of each job
+	// TODO then add this to the result
 	private boolean searchCompleted(int numSrchParts, String searchId) throws FailedSearchException {
 		
 		// TODO GET THIS FROM DAO !!!!!
@@ -295,8 +333,8 @@ public class WordStatSearchService extends AbstractService {
 	
 	
 	
-	private File getFile() throws FailedSearchException {
-		file = new File(dao.getFileName());
+	public File getFile() throws FailedSearchException {
+		File file = new File(dao.getFileName());
 		System.out.println("File input size: " + file.length() + " bytes");
 		if (file.length() == 0) {
 			throw new FailedSearchException("File " + dao.getFileName() + " cannot be found or is empty");

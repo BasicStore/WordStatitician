@@ -2,17 +2,15 @@ package com.floow.dm;
 
 public class JobHistory {
 	
-	private String searchId;
-	private String jobId;
-	private String failureReason;
-	private SearchJobStatus status;
-	
-	
+	protected String searchId;
+	protected String jobId;
+	protected String failureReason;
+	protected SearchJobStatus status;
+		
 	public JobHistory(String jobId) {
 		 this.jobId = jobId;
 	}
-	
-	
+		
 	public JobHistory(String searchId, String jobId, String failureReason, SearchJobStatus status) {
 		this.searchId = searchId;
 	    this.jobId = jobId;
