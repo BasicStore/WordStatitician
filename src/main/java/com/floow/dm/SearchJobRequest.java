@@ -24,8 +24,6 @@ public class SearchJobRequest extends JobHistory implements Runnable {
 	private String finalWord;
 	
 	private DaoAccess daoDetails;
-
-	
 	
 		
 	public SearchJobRequest(String searchId, String jobId, String filter, Integer numLetters,

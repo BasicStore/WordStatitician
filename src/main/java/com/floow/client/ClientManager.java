@@ -8,6 +8,10 @@ import com.floow.services.WordStatSearchService;
 import com.floow.utils.SysProperties;
 import java.nio.channels.FileChannel;
 
+
+/**
+ * Java console client to view the model for the WordStatitician application 
+ */
 public class ClientManager {
 	
 	private Logger log = Logger.getLogger(ClientManager.class.getName());
@@ -29,7 +33,9 @@ public class ClientManager {
 		log.info("presenting main menu.........starting the search");
 	
 		try {
-			AbstractSearchResult searchResult = service.getMostAndLeastCommonWords();
+			
+			// performMaximumSearch(String filter, Integer numLetters) throws FailedSearchException {
+			AbstractSearchResult searchResult = service.performMaximumSearch(null, null);
 			
 			log.info("search finished.........");
 			
@@ -46,37 +52,7 @@ public class ClientManager {
 	private void testScanningFile() {
 		
 	}
-	
-	
-	
-	
-	/*
-	 * FileInputStream inputStream = null;
-Scanner sc = null;
-try {
-    inputStream = new FileInputStream(path);
-    sc = new Scanner(inputStream, "UTF-8");
-    while (sc.hasNextLine()) {
-        String line = sc.nextLine();
-        // System.out.println(line);
-    }
-    // note that Scanner suppresses exceptions
-    if (sc.ioException() != null) {
-        throw sc.ioException();
-    }
-} finally {
-    if (inputStream != null) {
-        inputStream.close();
-    }
-    if (sc != null) {
-        sc.close();
-    }
-}
-	 */
-	
-	
-	
-	
+
 	
 
 }

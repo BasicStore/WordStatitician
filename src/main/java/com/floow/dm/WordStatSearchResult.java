@@ -1,79 +1,61 @@
 package com.floow.dm;
 import java.util.*;
 
+/**
+ * Class containing the results of a statistical word search on a file.
+ * This class contains the results of the entire search.
+ */
 public class WordStatSearchResult extends AbstractSearchResult {
 		
-	private Map<String, Integer> leastCommonWords = new HashMap<String, Integer>();
-	
-	private Map<String, Integer> mostCommonWords = new HashMap<String, Integer>();
-	
-	private Map<String, Integer> longestWords = new HashMap<String, Integer>();
-	
-	private Map<String, Integer> shortestWords = new HashMap<String, Integer>();
-	
+	private Map<String, Long> wordToOccurrMax;
+	private Map<String, Long> wordToOccurrMin;
+	private Map<Long, String> numLettersToWordMax;
+	private Map<Long, String> numLettersToWordMin;
 	private long totalWords;
 	
-	private String filter;
 	
-	private Integer numLetters;
-	
-	
-	public WordStatSearchResult(long searchTime) {
-		super(searchTime);
+	public WordStatSearchResult(String searchId, long startTime, int totalJobs, String filter, Integer numLetters, List<WordSearchType> srchTypes) {
+		super(searchId, startTime, totalJobs, filter, numLetters, srchTypes);
 	}
 
 
-	public WordStatSearchResult(long searchTime, Map<String, Integer> leastCommonWords,
-			Map<String, Integer> mostCommonWords, Map<String, Integer> longestWords, Map<String, Integer> shortestWords,
-			Long totalWords, String filter, Integer numLetters) {
-		super(searchTime);
-		this.leastCommonWords = leastCommonWords;
-		this.mostCommonWords = mostCommonWords;
-		this.longestWords = longestWords;
-		this.shortestWords = shortestWords;
-		this.totalWords = totalWords;
-		this.filter = filter;
-		this.numLetters = numLetters;
+	public Map<String, Long> getWordToOccurrMax() {
+		return wordToOccurrMax;
 	}
 
 
-	public Map<String, Integer> getLeastCommonWords() {
-		return leastCommonWords;
+	public void setWordToOccurrMax(Map<String, Long> wordToOccurrMax) {
+		this.wordToOccurrMax = wordToOccurrMax;
 	}
 
 
-	public void setLeastCommonWords(Map<String, Integer> leastCommonWords) {
-		this.leastCommonWords = leastCommonWords;
+	public Map<String, Long> getWordToOccurrMin() {
+		return wordToOccurrMin;
 	}
 
 
-	public Map<String, Integer> getMostCommonWords() {
-		return mostCommonWords;
+	public void setWordToOccurrMin(Map<String, Long> wordToOccurrMin) {
+		this.wordToOccurrMin = wordToOccurrMin;
 	}
 
 
-	public void setMostCommonWords(Map<String, Integer> mostCommonWords) {
-		this.mostCommonWords = mostCommonWords;
+	public Map<Long, String> getNumLettersToWordMax() {
+		return numLettersToWordMax;
 	}
 
 
-	public Map<String, Integer> getLongestWords() {
-		return longestWords;
+	public void setNumLettersToWordMax(Map<Long, String> numLettersToWordMax) {
+		this.numLettersToWordMax = numLettersToWordMax;
 	}
 
 
-	public void setLongestWords(Map<String, Integer> longestWords) {
-		this.longestWords = longestWords;
+	public Map<Long, String> getNumLettersToWordMin() {
+		return numLettersToWordMin;
 	}
 
 
-	public Map<String, Integer> getShortestWords() {
-		return shortestWords;
-	}
-
-
-	public void setShortestWords(Map<String, Integer> shortestWords) {
-		this.shortestWords = shortestWords;
+	public void setNumLettersToWordMin(Map<Long, String> numLettersToWordMin) {
+		this.numLettersToWordMin = numLettersToWordMin;
 	}
 
 
@@ -85,26 +67,5 @@ public class WordStatSearchResult extends AbstractSearchResult {
 	public void setTotalWords(long totalWords) {
 		this.totalWords = totalWords;
 	}
-
-
-	public String getFilter() {
-		return filter;
-	}
-
-
-	public void setFilter(String filter) {
-		this.filter = filter;
-	}
-
-
-	public Integer getNumLetters() {
-		return numLetters;
-	}
-
-
-	public void setNumLetters(Integer numLetters) {
-		this.numLetters = numLetters;
-	}
-	
 	
 }

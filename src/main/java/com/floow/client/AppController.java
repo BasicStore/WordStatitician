@@ -1,6 +1,10 @@
 package com.floow.client;
 import com.floow.services.WordStatSearchService;
 
+
+/**
+ * Controller class for the WordStatitician app 
+ */
 public class AppController {
 
 	public AppController(String hostname, int port, String filePath) {

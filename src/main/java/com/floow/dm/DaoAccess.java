@@ -1,15 +1,16 @@
 package com.floow.dm;
 
+/**
+ * Class to define the storage connection data  
+ */
 public class DaoAccess {
 
 	private int port;
 	private String hostname;
-	private String fileName;
-	
-	public DaoAccess(int port, String hostname, String fileName) {
+
+	public DaoAccess(int port, String hostname) {
 		this.port = port;
 		this.hostname = hostname;
-		this.fileName = fileName;
 	}
 
 	
@@ -29,12 +30,4 @@ public class DaoAccess {
 		this.hostname = hostname;
 	}
 
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-	
 }

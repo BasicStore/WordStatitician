@@ -3,18 +3,22 @@ import com.floow.dm.*;
 
 public abstract class AbstractService {
 
-	protected DaoAccess dao;
+	protected String fileName;
 	
 	public AbstractService() {
 		
 	}
 	
-	public AbstractService(DaoAccess dao) {
-		this.dao = dao;
+	public AbstractService(String fileName) {
+		this.fileName = fileName;
+	}
+	
+	public String getFileName() {
+		return fileName;
 	}
 
-	public DaoAccess getDao() {
-		return dao;
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 	
 }

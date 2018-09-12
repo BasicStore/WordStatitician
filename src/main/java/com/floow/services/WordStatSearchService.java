@@ -1,165 +1,60 @@
 package com.floow.services;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.List;
-import com.floow.client.ClientManager;
+import com.floow.dao.WordsStatJobsDao;
+import com.floow.dao.JobHistoryDao;
 import com.floow.dm.*;
 import com.floow.exceptions.*;
 import org.apache.log4j.Logger;
 
 
+/**
+ * Service to perform statistical word searches on the content of the given file 
+ */
 public class WordStatSearchService extends AbstractService {
 
 	private Logger log = Logger.getLogger(WordStatSearchService.class.getName());
 	
+	private static final boolean MAXIMUM_VALUES = true;
+	private static final boolean MINIMUM_VALUES = false;
+
+	
+	private WordStatJobsCollatorService collatorService;
+	
+	// setup daos
+	private DaoAccess daoAccess;
+	private WordsStatJobsDao wordsStatJobsDao;
+	private JobHistoryDao jobHistoryDao;
+	
+	
 	public WordStatSearchService(int port, String hostname, String fileName) {
-		super(new DaoAccess(port, hostname, fileName));
-	}
-	
-
-	public AbstractSearchResult getMostAndLeastCommonWords() throws FailedSearchException {
-		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
-		srchTypes.add(WordSearchType.MOST_COMMON_WORD);
-		srchTypes.add(WordSearchType.LEAST_COMMON_WORD);
-		return performSearch(null, null, srchTypes);
+		super(fileName);
+		daoAccess = new DaoAccess(port, hostname);
+		wordsStatJobsDao = new WordsStatJobsDao(daoAccess);
+		jobHistoryDao = new JobHistoryDao(daoAccess);
 		
-//		Map<String, Integer> leastCommonWords = new HashMap<String, Integer>();
-//		leastCommonWords.put("curiosity", 1);
-//		leastCommonWords.put("triviality", 3);
-//		leastCommonWords.put("pomposity", 3);
-//		leastCommonWords.put("oddly", 4);
-//		leastCommonWords.put("googly", 4);		
-//		Map<String, Integer> mostCommonWords = new HashMap<String, Integer>();
-//		mostCommonWords.put("curiosity", 1);
-//		mostCommonWords.put("triviality", 3);
-//		mostCommonWords.put("pomposity", 3);
-//		mostCommonWords.put("oddly", 4);
-//		mostCommonWords.put("googly", 4);
-//		WordStatSearchResult result = new WordStatSearchResult(4000l); 
-//		result.setLeastCommonWords(leastCommonWords);
-//		result.setMostCommonWords(mostCommonWords);
-//		return result;		
-	}
-	
-
-	
-	
-	public AbstractSearchResult getMostAndLeastCommonWords(String filter, Integer numLetters) throws FailedSearchException {
-//		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
-//		
-//		if (StringUtils.isBlank(filter)) {
-//			srchTypes.add(WordSearchType.MOST_COMMON_WORD);
-//			srchTypes.add(WordSearchType.LEAST_COMMON_WORD);
-//		} else {
-//			srchTypes.add(WordSearchType.MOST_COMMON_WORD_WITH_FILTER);
-//			srchTypes.add(WordSearchType.LEAST_COMMON_WORD_WITH_FILTER);
-//		}
-//		
-//		if (numLetters != null && numLetters.intValue() <= 0 ) {
-//			throw new FailedSearchException("Number of letters must be a positive number, but was: " + numLetters);
-//		}
-//		
-//		if (numLetters != null) { 
-//			srchTypes.add(WordSearchType.MOST_COMMON_WORD_OF_N_LETTERS);
-//			srchTypes.add(WordSearchType.LEAST_COMMON_WORD_OF_N_LETTERS);
-//		}
-//
-//		return performSearch(filter, numLetters, srchTypes);
-
-		//		// DUMMY HERE
-		Map<String, Integer> leastCommonWords = new HashMap<String, Integer>();
-		leastCommonWords.put("curiosity", 1);
-		leastCommonWords.put("triviality", 3);
-		leastCommonWords.put("pomposity", 3);
-		leastCommonWords.put("oddly", 4);
-		leastCommonWords.put("googly", 4);		
-		Map<String, Integer> mostCommonWords = new HashMap<String, Integer>();
-		mostCommonWords.put("curiosity", 1);
-		mostCommonWords.put("triviality", 3);
-		mostCommonWords.put("pomposity", 3);
-		mostCommonWords.put("oddly", 4);
-		mostCommonWords.put("googly", 4);
-		WordStatSearchResult result = new WordStatSearchResult(4000l); 
-		result.setLeastCommonWords(leastCommonWords);
-		result.setMostCommonWords(mostCommonWords);
-		return result;
+		collatorService = new WordStatJobsCollatorService(daoAccess, fileName);
 	}
 	
 	
-	
-	public AbstractSearchResult getLongestAndShortestWords(String filter) throws FailedSearchException {
-//		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
-//		if (StringUtils.isBlank(filter)) {
-//			srchTypes.add(WordSearchType.LONGEST_WORD);
-//			srchTypes.add(WordSearchType.SHORTEST_WORD);
-//
-//		} else {
-//			srchTypes.add(WordSearchType.LONGEST_WORD_WITH_FILTER);
-//			srchTypes.add(WordSearchType.SHORTEST_WORD_WITH_FILTER);
-//		}
-//		
-//		return performSearch(filter, null, srchTypes);
+	public AbstractSearchResult performMaximumSearch(String filter, Integer numLetters) throws FailedSearchException {
+		return performSearch(filter, numLetters, Arrays.asList(WordSearchType.values()));
+	}
 		
-		// DUMMY HERE
-		WordStatSearchResult result = new WordStatSearchResult(4003l);
-		Map<String, Integer> longestWords = new HashMap<String, Integer>();
-		longestWords.put("sdfsdfsdfsdfwsfsddfwerwerwefsdfsdfsfsdfsdfsdfsfsfsfsdfsdf", 30);
-		longestWords.put("fsdfsdfsdfsdfsdfsdfsdfsddfsfsdfsdfsfdsdfsdfsdfs", 23);
-		longestWords.put("zcxzxczxczxczxczxczxxczczczxczxczxczxczxczx", 19);
-		result.setLongestWords(longestWords);
-		Map<String, Integer> shortestWords = new HashMap<String, Integer>();
-		shortestWords.put("a", 1);
-		shortestWords.put("i", 1);
-		result.setShortestWords(shortestWords);
-		return result;
-	}
 	
 	
-	
-	
-	public AbstractSearchResult getTotalWords(String filter, Integer numLetters) throws FailedSearchException {
-//		List<WordSearchType> srchTypes = new ArrayList<WordSearchType>();
-//		if (StringUtils.isBlank(filter)) {
-//			srchTypes.add(WordSearchType.TOTAL_WORDS);
-//		} else {
-//			srchTypes.add(WordSearchType.TOTAL_WORDS_WITH_FILTER);
-//		}
-//		
-//		if (numLetters != null && numLetters.intValue() <= 0 ) {
-//			throw new FailedSearchException("Number of letters must be a positive number, but was: " + numLetters);
-//		}
-//		
-//		if (numLetters != null) { 
-//			srchTypes.add(WordSearchType.TOTAL_WORDS_OF_N_LETTERS);
-//		}
-//
-//		return performSearch(filter, numLetters, srchTypes);
-		
-		WordStatSearchResult result = new WordStatSearchResult(4008l);
-		result.setTotalWords(90000345l);
-		result.setFilter(filter);
-		result.setNumLetters(numLetters);
-		return result;
-	}
-	
-	
-		
-	////////////////////////////////////////////////////
-	
-	
-	private AbstractSearchResult performSearch(String filter, Integer numLetters, List<WordSearchType> srchTypes) 
+	protected AbstractSearchResult performSearch(String filter, Integer numLetters, List<WordSearchType> srchTypes) 
 																				throws FailedSearchException {
 		// TODO get Max from properties
 		final long MAX_PROCESSING_TIME = 120000;
@@ -168,23 +63,30 @@ public class WordStatSearchService extends AbstractService {
 		long startTime = System.currentTimeMillis();
 
 		try {			
-			int numOfJobs = doDistributedSearch(searchId, filter, numLetters, srchTypes);
+			AbstractSearchResult distributedSearch = doDistributedSearch(searchId, filter, numLetters, srchTypes);
 			
-//			long timeElapsed = 0l;
+			
+//			long timeTaken = 0l;
 //			while (timeElapsed < MAX_PROCESSING_TIME) {
 //				Thread.sleep(3000);
 //				boolean searchComplete = searchCompleted(numOfJobs, searchId);
-//				timeElapsed = startTime - System.currentTimeMillis();
+			
+			
 //				if (searchComplete) {
-//					return collateResults(searchId, srchTypes, timeElapsed);
+					// timeTaken = distributedSearch.getStartTime() - System.currentTimeMillis();
+		            // distributedSearch.setTimetaken(timetaken);
+//					return collateResults(distributedSearch);
 //				}
 //			}
 			
-			System.out.println("Number of jobs created: " + numOfJobs);
+			System.out.println("Number of jobs created: " + distributedSearch.getTotalJobs());
+			
+			//return new WordStatSearchResult(String searchId, long searchTime, int totalJobs);
+			
 			
 		} catch(Exception e) {
 			log.info("Exception thrown attempting to perform file search", e);
-			throw new FailedSearchException("A " + e.getClass().getName() + " has occurred processing the file: " + dao.getFileName() + 
+			throw new FailedSearchException("A " + e.getClass().getName() + " has occurred processing the file: " + getFileName() + 
 					". Original message: " + e.getMessage()); 
 		} 
 
@@ -193,10 +95,10 @@ public class WordStatSearchService extends AbstractService {
 						+ MAX_PROCESSING_TIME / 1000 + " seconds");
 	}
 	
-		
+	
 	
 	// initiates a search
-	private int doDistributedSearch(String searchId, String filter, Integer numLetters, List<WordSearchType> srchTypes) throws FailedSearchException, IOException {
+	protected AbstractSearchResult doDistributedSearch(String searchId, String filter, Integer numLetters, List<WordSearchType> srchTypes) throws FailedSearchException, IOException {
 		// setup thread pool
 		int cores = Runtime.getRuntime().availableProcessors(); // 4
 		int threadPoolSize = cores > 2 ? cores - 2 : 1 ; // note that the JMS queue will be on 1 core, and this class on another..... 
@@ -204,13 +106,13 @@ public class WordStatSearchService extends AbstractService {
 		ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
 		
 		// setup channel
-		FileInputStream fileInputStream = new FileInputStream(dao.getFileName());
+		FileInputStream fileInputStream = new FileInputStream(getFileName());
 	    FileChannel channel = fileInputStream.getChannel();
 	    long fileSize = channel.size(); 
 	    
 	    // set pre-jobs distribution properties
 	    long startTime = System.currentTimeMillis();
-	    int seq = 0; 
+	    int numJobs = 0; 
 	    long offsetPosition = 0;
 		int chunkSize = 1000000;  // TODO  PUT THIS IN A PROPERTIES FILE
 		
@@ -218,7 +120,7 @@ public class WordStatSearchService extends AbstractService {
 	    while (offsetPosition <= fileSize)
 	    {
 	    	// update the sequence / job id
-	    	seq++;
+	    	numJobs++;
 	    	
 	    	// allocate memory for this readable chunk
 	        ByteBuffer buff = ByteBuffer.allocate(chunkSize);
@@ -227,7 +129,7 @@ public class WordStatSearchService extends AbstractService {
 	        channel.read(buff, offsetPosition);
 
 	        // process the readable chunk in a separate thread 
-	        executor.execute(new SearchJobRequest(searchId, String.valueOf(seq), filter, numLetters, buff, srchTypes, dao));
+	        executor.execute(new SearchJobRequest(searchId, String.valueOf(numJobs), filter, numLetters, buff, srchTypes, daoAccess));
 	        
 	        // get the next read position in the file
 	        offsetPosition = offsetPosition + chunkSize;
@@ -239,7 +141,7 @@ public class WordStatSearchService extends AbstractService {
 	    log.info("Time taken to set up all producer threads with their buffer = " + timeTaken / 1000);
 	    awaitTerminationAfterShutdown(executor);
 		
-		return seq;
+		return new WordStatSearchResult(searchId, startTime, numJobs, filter, numLetters, srchTypes);
 	}
      
 	
@@ -258,7 +160,7 @@ public class WordStatSearchService extends AbstractService {
     */
 	
 	
-	private void awaitTerminationAfterShutdown(ExecutorService threadPool) {
+	protected void awaitTerminationAfterShutdown(ExecutorService threadPool) {
 	    threadPool.shutdown();
 	    try {
 	        if (!threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
@@ -266,37 +168,32 @@ public class WordStatSearchService extends AbstractService {
 	        }
 	    } catch (InterruptedException ex) {
 	        threadPool.shutdownNow();
-	        // Thread.currentThread().interrupt();
 	    }
 	}
 	
 	
 	
-	// TODO get the results
-	private AbstractSearchResult collateResults(String searchId, List<WordSearchType> srchTypes, long timeElapsed)  {
+	// TODO get the results  FOR NOW COLLATE ALL THE RESULTS 
+	protected AbstractSearchResult collateResults(AbstractSearchResult resultData)  {
+		String searchId = resultData.getSearchId();
+		String filter = resultData.getFilter();
+		Integer numLetters = resultData.getNumLetters();
+		WordStatSearchResult populatedResults = (WordStatSearchResult) resultData;
 		
-		WordStatSearchResult srchResult = new WordStatSearchResult(timeElapsed);
+		// collate the search results of all the services [NOTES THIS SEARCHES FOR ALL WordSearchTypes!!]
+		Map<String, Long> wordToOccurrMax = collatorService.findWordsToNumberOfOccurrences(searchId, filter, numLetters, MAXIMUM_VALUES);
+		Map<String, Long> wordToOccurrMin = collatorService.findWordsToNumberOfOccurrences(searchId, filter, numLetters, MINIMUM_VALUES);
+		Map<Long, String> numLettersToWordMax = collatorService.findNumberOfLettersForWords(searchId, filter, MAXIMUM_VALUES);
+		Map<Long, String> numLettersToWordMin = collatorService.findNumberOfLettersForWords(searchId, filter, MINIMUM_VALUES);
+		long totalWords = collatorService.findTotalWords(searchId, filter, numLetters);
+
+		populatedResults.setWordToOccurrMax(wordToOccurrMax);
+		populatedResults.setWordToOccurrMin(wordToOccurrMin);
+		populatedResults.setNumLettersToWordMax(numLettersToWordMax);
+		populatedResults.setNumLettersToWordMin(numLettersToWordMin);
+		populatedResults.setTotalWords(totalWords);
 		
-		/* SWITCH to build up data
-		   MOST_LEAST_COMMON
-	           MOST_LEAST_COMMON_WITH_FILTER
-	           MOST_LEAST_COMMON_OF_N_LETTERS
-	           LONGEST_SHORTEST
-	           LONGEST_SHORTEST_WITH_FILTER
-	           TOTAL_WORDS
-	           TOTAL_WORDS_WITH_FILTER  
-	           TOTAL_WORDS_OF_N_LETTERS
-		 */
-		
-		
-		
-		/*
-		 WordStatSearchResult(long searchTime, Map<String, Integer> leastCommonWords,
-			Map<String, Integer> mostCommonWords, Map<String, Integer> longestWords, Map<String, Integer> shortestWords,
-			long totalWords, String filter, int numLetters) 
-		 */
-		
-		return srchResult;
+		return populatedResults;
 	}
 	
 	
@@ -305,39 +202,34 @@ public class WordStatSearchService extends AbstractService {
 	
 	// TODO NOTE THAT THE FIRST JOB ON GETTING THE RESULT LIST IS TO CALCULTATE the last words, other than seq 1, and first words of each job
 	// TODO then add this to the result
-	private boolean searchCompleted(int numSrchParts, String searchId) throws FailedSearchException {
-		
-		// TODO GET THIS FROM DAO !!!!!
-		List<JobHistory> jobList = null;  
+	protected boolean searchCompleted(int numOfJobs, String searchId) throws FailedSearchException {
+		List<JobHistory> srchJobs = jobHistoryDao.findJobRecords(searchId);  
 
+		boolean srchComplete = true;
+		
 		// TODO convert to JAVA 8!!
-		if (jobList != null && jobList.size() > 0) {
-			boolean srchComplete = true;
-			for (JobHistory job : jobList) {
+		if (srchJobs != null && srchJobs.size() > 0 && srchJobs.size() == numOfJobs) {
+			for (JobHistory job : srchJobs) {
 				if (job.getStatus().getId() == SearchJobStatus.FAILED.getId()) {
 					throw new FailedSearchException("Search failed on job: " + job.getStatus().getId());
 				}
 				
 				if (job.getStatus().getId() != SearchJobStatus.COMPLETED.getId()) {
-					srchComplete = false;
+					return false;
 				}
-			}
-			
-			if (srchComplete && jobList.size() == numSrchParts) {
-				return true;
 			}
 		} 
 		
-		return false;
+		return true;
 	}
 	
 	
 	
 	public File getFile() throws FailedSearchException {
-		File file = new File(dao.getFileName());
+		File file = new File(getFileName());
 		System.out.println("File input size: " + file.length() + " bytes");
 		if (file.length() == 0) {
-			throw new FailedSearchException("File " + dao.getFileName() + " cannot be found or is empty");
+			throw new FailedSearchException("File " + getFileName() + " cannot be found or is empty");
 		}
 
 		return file;

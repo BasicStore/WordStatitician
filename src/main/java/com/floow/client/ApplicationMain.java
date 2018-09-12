@@ -4,6 +4,10 @@ import java.io.*;
 
 public class ApplicationMain {
 	
+	/**
+	 * Main method for the WordStatitician app
+	 * @param args
+	 */
 	public static void main(String[] args) {
 				
 		// TODO read in the params from the user
